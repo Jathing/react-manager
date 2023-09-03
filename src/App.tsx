@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {ChangeEvent, FC, useState} from 'react';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const initialState = [
+	{id: '1', text: '学react'},
+];
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+type ItemProps = {
+	id: string,
+	text: string
+};
 
-export default App
+const App: FC = () => {
+	const [input, setInput] = useState<string>('');
+	const [list, setList] = useState<ItemProps[]>(initialState);
+
+	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setInput(e.target.value.trim())
+	};
+
+	const handleAdd = () => {
+		if (input === '') return
+		setList(list.concat({id: Date.now().toString(), text: input}));
+		setInput('')
+	};
+
+	const handleDelete = (id: string) => {
+		setList(list.filter(item => item.id !== id));
+	};
+
+	return (
+		<div>
+			<h1>TODO</h1>
+			<input type='text' value={input} onChange={handleChange}/>
+			<button onClick={handleAdd}>添加</button>
+			<ul>
+				{list.map((item) => (
+					<li key={item.id}>
+						{item.text}
+						<button onClick={() => handleDelete(item.id)}>删除</button>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
+};
+
+export default App;
